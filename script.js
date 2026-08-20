@@ -23,7 +23,9 @@ const rationaleLabels = {
 const feedbackLabels = {
   opening: "칭찬으로 시작",
   persona_comment: "역할 설정 피드백",
-  question_comment: "질문 피드백",
+  question_stage2_comment: "2단계 질문 피드백",
+  question_stage3_comment: "3단계 질문 피드백",
+  question_comment: "질문 피드백 (이전 형식)",
   originality_comment: "자기 언어화 피드백",
   closing: "마무리"
 };
@@ -103,7 +105,9 @@ function renderScores(scores) {
   let total = 0;
   let maxTotal = 0;
 
-  Object.entries(scores).forEach(([key, value]) => {
+  Object.entries(scoreLabels).forEach(([key, label]) => {
+    if (!Object.hasOwn(scores, key)) return;
+    const value = scores[key];
     const max = scoreMaxValues[key] || 10;
     const numericValue = Number(value);
     const percent = Number.isFinite(numericValue) ? clamp((numericValue / max) * 100, 0, 100) : 0;
@@ -118,8 +122,8 @@ function renderScores(scores) {
     item.className = "score-item";
     item.innerHTML = `
       <div class="score-top">
-        <span class="score-name">${scoreLabels[key] || key}</span>
-        <span class="score-value">${safe(value)}${unit}</span>
+        <span class="score-name">${escapeHtml(label)}</span>
+        <span class="score-value">${escapeHtml(safe(value))}${unit}</span>
       </div>
       <div class="bar" aria-hidden="true">
         <div class="bar-fill" style="width: ${percent}%"></div>
